@@ -1,3 +1,5 @@
+# INVOICE CATEGORIZER
+
 As a key employee at a franchised restaurant, one of my weekly tasks is to:
 
 - Receive invoices
