@@ -6,7 +6,7 @@ import {
 } from '../interfaces/item.interface'
 
 export interface CsvResponse {
-  message?: {
+  message: {
     categoryTotals: {
       totals: { [category: string]: BigNumber }
       grandTotal: BigNumber
@@ -14,7 +14,7 @@ export interface CsvResponse {
       unmatchedItems?: UnmatchedItems[]
     }
     itemInfo: Item[]
-    salesTax: BigNumber
+    salesTax: BigNumber | undefined
     additionalCharges: BigNumber
   }
 }

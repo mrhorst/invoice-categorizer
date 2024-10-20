@@ -22,13 +22,17 @@ const Invoice = ({ invoice }: any) => {
           <span className="font-normal">${invoice.total.toString()}</span>
         </div>
         <div className="mb-2 text-gray-700 font-semibold">
-          Sales Tax: <span className="font-normal">TBD</span>
+          Sales Tax: <span className="font-normal">{invoice.salesTax}</span>
         </div>
         <div className="mb-2 text-gray-700 font-semibold">
           Additional Charges:{' '}
           <span className="font-normal">
             ${invoice.additionalCharges?.toString()}
           </span>
+        </div>
+        <div className="mb-2 text-gray-700 font-semibold">
+          Grand Total:{' '}
+          <span className="font-normal">${invoice.grandTotal?.toString()}</span>
         </div>
       </div>
       <div>

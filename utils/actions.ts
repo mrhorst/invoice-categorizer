@@ -8,6 +8,9 @@ const SALES_TAX = 7 // Hardcoded for now.
 
 export const createInvoice = async (
   items: Item[] | undefined,
+  salesTax: BigNumber,
+  additionalCharges: BigNumber,
+  grandTotal: BigNumber,
   fileName: any
 ) => {
   if (items == undefined) {
@@ -22,7 +25,17 @@ export const createInvoice = async (
     const itemTotals = getItemTotals(items)?.toString()
     const vendor = await findOrCreateVendor(vendorName)
 
-    await findOrCreateInvoice(invoiceNumber, vendor, date, itemTotals)
+    const invoiceInfo = {
+      invoiceNumber,
+      vendor,
+      date,
+      itemTotals,
+      grandTotal,
+      salesTax,
+      additionalCharges,
+    }
+
+    await findOrCreateInvoice(invoiceInfo)
 
     await findOrAddItemToInvoice(items, invoiceNumber)
   } catch (e) {
@@ -81,29 +94,29 @@ const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
   }
 }
 
-const findOrCreateInvoice = async (
-  invoiceNumber: any,
-  vendor: any,
-  date: any,
-  itemTotals: any
-) => {
+const findOrCreateInvoice = async (invoiceInfo: any) => {
   try {
     let upsertInvoice = await db.invoice.upsert({
       where: {
-        invoiceNumber: invoiceNumber,
+        invoiceNumber: invoiceInfo.invoiceNumber,
       },
       update: {
-        total: Number(itemTotals),
-        date: date,
-        vendorId: vendor?.id,
+        total: Number(invoiceInfo.itemTotals),
+        date: invoiceInfo.date,
+        vendorId: invoiceInfo.vendor?.id,
+        additionalCharges: invoiceInfo.additionalCharges,
+        grandTotal: invoiceInfo.grandTotal,
       },
       create: {
-        invoiceNumber: invoiceNumber,
-        vendorId: vendor?.id,
-        date: date,
-        total: Number(itemTotals),
+        invoiceNumber: invoiceInfo.invoiceNumber,
+        vendorId: invoiceInfo.vendor?.id,
+        date: invoiceInfo.date,
+        additionalCharges: invoiceInfo.additionalCharges,
+        total: Number(invoiceInfo.itemTotals),
+        grandTotal: invoiceInfo.grandTotal,
       },
     })
+    console.log(invoiceInfo)
     return upsertInvoice
   } catch (e) {
     console.error(

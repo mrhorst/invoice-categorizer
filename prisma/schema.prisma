@@ -32,6 +32,7 @@ model Invoice {
   total             Decimal
   grandTotal        Decimal?
   additionalCharges Decimal?
+  salesTax          Decimal?
   items             Item[]
   user              User?     @relation(fields: [userId], references: [id])
   userId            String?

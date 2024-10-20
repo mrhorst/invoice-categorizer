@@ -3,6 +3,7 @@ import { formatJsonResponse } from '../utils/responseUtils'
 import { style } from '../styles/customStyles'
 import { CsvResponse } from '@/app/interfaces/response.interface'
 import { createInvoice } from '@/utils/actions'
+import BigNumber from 'bignumber.js'
 
 const ResponseDisplay = ({
   data,
@@ -13,8 +14,19 @@ const ResponseDisplay = ({
 }) => {
   const [isMatchedItemsVisible, setMatchedItemsVisible] = useState(false) // State to toggle MatchedItemDisplay
   const addToDb = () => {
-    // console.log(data)
-    createInvoice(data?.message?.itemInfo, fileName)
+    const {
+      itemInfo,
+      salesTax = new BigNumber(0),
+      additionalCharges = new BigNumber(0),
+    } = data?.message ?? {}
+    console.log(data)
+    createInvoice(
+      itemInfo,
+      salesTax,
+      additionalCharges,
+      data?.message.categoryTotals?.grandTotal ?? new BigNumber(0),
+      fileName
+    )
   }
   // Toggle function
   const toggleMatchedItems = () => {
