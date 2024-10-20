@@ -2,7 +2,7 @@ import InvoiceList from './components/InvoiceList'
 import db from '@/utils/db'
 
 const getInvoiceData = async () => {
-  const data = await db.invoice.findMany()
+  const data = await db.invoice.findMany({})
   return data
 }
 
@@ -21,6 +21,7 @@ const InvoicesPage = async () => {
   const invoices = await Promise.all(
     allInvoices.map(async (invoice: any) => {
       invoice.vendor = await getVendorData(invoice.vendorId)
+      console.log(invoice)
       return { ...invoice }
     })
   )
