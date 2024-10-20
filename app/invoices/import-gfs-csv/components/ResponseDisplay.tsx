@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatJsonResponse } from '../utils/responseUtils'
 import { style } from '../styles/customStyles'
 import { CsvResponse } from '@/app/interfaces/response.interface'
+import { createInvoice } from '@/utils/actions'
 
 const ResponseDisplay = ({
   data,
@@ -11,7 +12,10 @@ const ResponseDisplay = ({
   fileName: string | null
 }) => {
   const [isMatchedItemsVisible, setMatchedItemsVisible] = useState(false) // State to toggle MatchedItemDisplay
-
+  const addToDb = () => {
+    // console.log(data)
+    createInvoice(data?.message?.itemInfo, fileName)
+  }
   // Toggle function
   const toggleMatchedItems = () => {
     setMatchedItemsVisible(!isMatchedItemsVisible)
@@ -20,7 +24,7 @@ const ResponseDisplay = ({
   return data && data.message ? (
     <div className={style.responseSuccess}>
       <Totals data={data} fileName={fileName} />
-      <UnmatchedItemDisplay data={data} />
+      <UnmatchedItemDisplay data={data} addToDb={addToDb} />
 
       <button onClick={toggleMatchedItems} className={style.button}>
         {isMatchedItemsVisible ? 'Hide Matched Items' : 'Show Matched Items'}
@@ -39,7 +43,7 @@ const ResponseDisplay = ({
 const MatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
   return data && data.message ? (
     <div className="mt-4">
-      {data.message.matchedItems.map((item: any) => {
+      {data.message.categoryTotals?.matchedItems.map((item: any) => {
         return (
           <div
             className="p-2 top-4 border border-gray-500"
@@ -60,12 +64,18 @@ const MatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
   )
 }
 
-const UnmatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
+const UnmatchedItemDisplay = ({
+  data,
+  addToDb,
+}: {
+  data: CsvResponse | null
+  addToDb: () => void
+}) => {
   return data &&
-    data.message?.unmatchedItems &&
-    data.message.unmatchedItems.length > 0 ? (
+    data.message?.categoryTotals.unmatchedItems &&
+    data.message.categoryTotals.unmatchedItems.length > 0 ? (
     <div>
-      {data.message.unmatchedItems.map((item: any) => {
+      {data.message.categoryTotals.unmatchedItems.map((item: any) => {
         return (
           <div
             className={`${style.responseNoData} whitespace-pre-wrap`}
@@ -82,7 +92,12 @@ const UnmatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
       })}
     </div>
   ) : (
-    <h1>No Unmatched Data</h1>
+    <>
+      <h1>No Unmatched Data. Safe to add to database!</h1>
+      <button onClick={addToDb} className={style.button}>
+        {'Add To DB'}
+      </button>
+    </>
   )
 }
 
@@ -93,10 +108,10 @@ const Totals = ({ data, fileName }: any) => {
       <p>{fileName}</p>
       <h1 className={style.responseFont + ' pt-3 pb-1'}>Body:</h1>
       <p className="whitespace-pre-wrap">
-        {formatJsonResponse(data.message.totals)}
+        {formatJsonResponse(data.message.categoryTotals.totals)}
       </p>
       <h1 className={style.responseFont + ' pt-3'}>
-        Invoice GrandTotal: {data.message.grandTotal}
+        Invoice GrandTotal: {data.message.categoryTotals.grandTotal}
       </h1>
     </>
   )

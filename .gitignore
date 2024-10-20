@@ -3,6 +3,11 @@
 # config files
 /app/api/config
 
+# db files, seeds, etc..
+*.db
+/utils/seed.js
+/utils/seed2.js
+
 
 # dependencies
 /node_modules

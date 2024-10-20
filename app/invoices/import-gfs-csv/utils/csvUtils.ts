@@ -5,10 +5,12 @@ import {
   Category,
   UnmatchedItems,
   MatchedItems,
-} from '../../interfaces/item.interface'
+} from '@/app/interfaces/item.interface'
 
 interface ReadStreamResult {
-  csvData: any
+  itemInfo: any
+  vendorName: any
+  invoiceNumber: string
   salesTax: number
   additionalCharges: number
 }
@@ -43,6 +45,7 @@ function calculateCategoryTotals(
       const itemNumber = item['Item Number']
       const itemDescription = item['Item Description']
       const extendedPrice = new BigNumber(item['Price (Extended)'])
+      const qtyShipped = item['Quantity Shipped']
 
       const categoryEntry = categoryList.find(
         (entry) => entry.code === itemNumber
@@ -65,6 +68,7 @@ function calculateCategoryTotals(
           itemDescription,
           category,
           totalWithTax,
+          totalWithoutTax: extendedPrice,
         })
 
         // Add to category total

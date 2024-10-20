@@ -4,8 +4,8 @@ import './globals.css'
 const links = [
   { href: '/', label: 'Home' },
   {
-    href: '/import-csv',
-    label: 'Import CSV',
+    href: '/invoices',
+    label: 'Invoices',
   },
   // { href: '/import-pdf', label: 'Import PDF' },
 ]

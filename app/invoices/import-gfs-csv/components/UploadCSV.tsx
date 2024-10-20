@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Papa from 'papaparse'
 import {
-  convertToDateFormat,
+  manipulateDate,
   extractInvoiceNumber,
   handleSendCsv,
 } from '../utils/importUtils'
@@ -19,11 +19,11 @@ const UploadCSV = ({
   fileName: any
 }) => {
   const [file, setFile] = useState<File | null>(null)
-  const [csvData, setCsvData] = useState(null)
+  const [csvData, setCsvParsedData] = useState(null)
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().slice(0, 10)
   ) // Default to today's date
-  const [vendor, setVendor] = useState('none') // Default to 'None'
+  const [vendor, setVendor] = useState('gfs') // Default to 'gfs'
   const [salesTax, setSalesTax] = useState<number | null>(null)
   const [additionalChargeName, setAdditionalChargeName] = useState('none')
   const [additionalChargeAmount, setAdditionalChargeAmount] = useState<
@@ -32,12 +32,18 @@ const UploadCSV = ({
 
   useEffect(() => {
     if (csvData && fileName) {
-      setFileName(
-        `${vendor} ${convertToDateFormat(selectedDate)} #${extractInvoiceNumber(
-          fileName
-        )}`
-      )
-      handleSendCsv(csvData, setJsonResponse, salesTax, additionalChargeAmount)
+      const fileNameString = `${vendor} ${manipulateDate(
+        selectedDate
+      )} #${extractInvoiceNumber(fileName)}`
+
+      setFileName(fileNameString)
+
+      const infoData = {
+        vendor,
+        csvData,
+        invoiceNumber: extractInvoiceNumber(fileName),
+      }
+      handleSendCsv(infoData, setJsonResponse, salesTax, additionalChargeAmount)
     }
   }, [
     csvData,
@@ -51,10 +57,14 @@ const UploadCSV = ({
   ])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFile = e.target.files[0]
-      setFile(selectedFile)
-      setFileName(selectedFile.name)
+    try {
+      if (e.target.files) {
+        const selectedFile = e.target.files[0]
+        setFile(selectedFile)
+        setFileName(selectedFile.name)
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -78,7 +88,7 @@ const UploadCSV = ({
         header: true,
         skipEmptyLines: true,
         complete: function (results: any) {
-          setCsvData(results.data)
+          setCsvParsedData(results.data)
         },
       })
     }
@@ -87,7 +97,7 @@ const UploadCSV = ({
 
   return (
     <div className={style.container}>
-      <form onSubmit={handleSubmit} className={style.form}>
+      <form action={''} onSubmit={handleSubmit} className={style.form}>
         {/* File Upload Section */}
         <div className={style.formGroup}>
           <label htmlFor="csvFile" className={style.label}>
@@ -97,6 +107,7 @@ const UploadCSV = ({
             id="csvFile"
             type="file"
             accept=".csv"
+            name="csvFile"
             onChange={handleFileChange}
             className={style.input}
           />
@@ -109,6 +120,7 @@ const UploadCSV = ({
           <input
             id="datePicker"
             type="date"
+            name="date"
             value={selectedDate}
             onChange={handleDateChange}
             className="border border-gray-300 rounded p-2 w-full"

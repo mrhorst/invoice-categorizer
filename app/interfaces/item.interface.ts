@@ -3,6 +3,12 @@ export interface Item {
   'Item Number': string
   'Item Description': string
   'Price (Extended)': string
+  'Quantity Shipped': string
+  'Price (Case/Unit)': string
+  Category: Category
+  itemQty: BigNumber
+  extendedPrice: BigNumber
+  taxable: boolean
 }
 
 export interface Category {
@@ -24,4 +30,5 @@ export interface MatchedItems {
   itemDescription: string
   category: string
   totalWithTax: BigNumber
+  totalWithoutTax: BigNumber
 }

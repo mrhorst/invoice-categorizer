@@ -5,7 +5,18 @@ const handleSendCsv = async (
   additionalCharges: any
 ) => {
   try {
-    const dataToSend = { csvData, salesTax, additionalCharges }
+    const invoiceNumber = csvData['invoiceNumber']
+    const itemInfo = csvData.csvData
+    const vendorName = csvData['vendor']
+
+    const dataToSend = {
+      itemInfo,
+      vendorName,
+      invoiceNumber,
+      salesTax,
+      additionalCharges,
+    }
+
     const response = await fetch('/api/csv', {
       method: 'POST',
       headers: {
@@ -24,7 +35,7 @@ const handleSendCsv = async (
   }
 }
 
-const convertToDateFormat = (date: string): string => {
+const manipulateDate = (date: string): string => {
   const [year, month, day] = date.split('-') // Split by '-'
   const shortYear = year.slice(2) // Get the last two digits of the year
   return `${month}.${day}.${shortYear}` // Return in DD.MM.YY format
@@ -36,4 +47,4 @@ const extractInvoiceNumber = (fileName: string): string | null => {
   return match ? match[0] : null
 }
 
-export { handleSendCsv, convertToDateFormat, extractInvoiceNumber }
+export { handleSendCsv, manipulateDate, extractInvoiceNumber }
