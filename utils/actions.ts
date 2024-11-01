@@ -1,10 +1,11 @@
 'use server'
 
 import db from './db'
+import fs from 'fs'
+import path from 'path'
 import { Item } from '@/app/interfaces/item.interface'
 import BigNumber from 'bignumber.js'
 import { gfsCode } from '@/app/api/config/gfs_code'
-const SALES_TAX = 7 // Hardcoded for now.
 
 export const createInvoice = async (
   items: Item[] | undefined,
@@ -80,7 +81,6 @@ const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
                 price: item['Price (Case/Unit)'],
                 extendedPrice: item['Price (Extended)'],
                 itemQty: item['Quantity Shipped'],
-                taxRate: SALES_TAX,
                 taxable: taxable,
               },
             })
@@ -105,12 +105,14 @@ const findOrCreateInvoice = async (invoiceInfo: any) => {
         date: invoiceInfo.date,
         vendorId: invoiceInfo.vendor?.id,
         additionalCharges: invoiceInfo.additionalCharges,
+        salesTax: invoiceInfo.salesTax,
         grandTotal: invoiceInfo.grandTotal,
       },
       create: {
         invoiceNumber: invoiceInfo.invoiceNumber,
         vendorId: invoiceInfo.vendor?.id,
         date: invoiceInfo.date,
+        salesTax: invoiceInfo.salesTax,
         additionalCharges: invoiceInfo.additionalCharges,
         total: Number(invoiceInfo.itemTotals),
         grandTotal: invoiceInfo.grandTotal,
@@ -214,6 +216,28 @@ const findOrCreateCategory = async (itemCategory: any) => {
   } catch (e) {
     console.error(
       '***********************************\nERROR AT findOrCreateCategory: ' + e
+    )
+  }
+}
+
+export const categorizeItem = (item: any) => {
+  try {
+    console.log("I'm in!")
+    const newGfsCode = [...gfsCode, item]
+    const newContent = `export const gfsCode=${JSON.stringify(newGfsCode)}`
+    const filePath = path.resolve('app', 'api', 'config', 'gfs_code.ts')
+    // const filePath = path.join('@/app/api/config/', 'gfs_code.ts')
+
+    fs.writeFile(filePath, newContent, (err) => {
+      if (err) {
+        console.error('Error writing to file:', err)
+      } else {
+        console.log('File successfully overwritten!')
+      }
+    })
+  } catch (e) {
+    console.error(
+      '***********************************\nERROR AT categorizeItem: ' + e
     )
   }
 }

@@ -47,7 +47,7 @@ model Item {
   price         Decimal
   itemQty       Decimal
   extendedPrice Decimal
-  taxRate       Decimal
+  // taxRate       Decimal
   taxable       Boolean
   category      Category @relation(fields: [categoryId], references: [id])
   categoryId    String

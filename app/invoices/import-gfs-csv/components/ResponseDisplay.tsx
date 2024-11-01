@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { formatJsonResponse } from '../utils/responseUtils'
 import { style } from '../styles/customStyles'
 import { CsvResponse } from '@/app/interfaces/response.interface'
-import { createInvoice } from '@/utils/actions'
+import { categorizeItem, createInvoice } from '@/utils/actions'
 import BigNumber from 'bignumber.js'
 
 const ResponseDisplay = ({
@@ -28,6 +28,7 @@ const ResponseDisplay = ({
       fileName
     )
   }
+
   // Toggle function
   const toggleMatchedItems = () => {
     setMatchedItemsVisible(!isMatchedItemsVisible)
@@ -83,33 +84,129 @@ const UnmatchedItemDisplay = ({
   data: CsvResponse | null
   addToDb: () => void
 }) => {
+  const [selectedCategory, setSelectedCategory] = useState<{
+    [key: string]: string
+  }>({})
+  const [isTaxable, setIsTaxable] = useState<boolean>(false)
+
+  const handleAddToGfsList = (item: any) => {
+    const itemInfo = {
+      code: item.itemNumber,
+      name: item.itemDescription,
+      category: selectedCategory[item.itemNumber] || '',
+      tax: isTaxable,
+    }
+    console.log('Is Taxable?', isTaxable)
+    categorizeItem(itemInfo)
+  }
+
   return data &&
     data.message?.categoryTotals.unmatchedItems &&
     data.message.categoryTotals.unmatchedItems.length > 0 ? (
-    <div>
+    <div className="container mx-auto p-4">
       {data.message.categoryTotals.unmatchedItems.map((item: any) => {
         return (
           <div
-            className={`${style.responseNoData} whitespace-pre-wrap`}
+            className="border border-gray-300 rounded-lg p-4 mb-6 shadow-md"
             key={item.itemNumber}
           >
-            <p>Item code: {item.itemNumber}</p>
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[25ch]">
+            <p className="text-lg font-semibold mb-2">
+              Item code: {item.itemNumber}
+            </p>
+            <p className="text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-[25ch] mb-4">
               Description: {item.itemDescription}
             </p>
-            <p>Total if taxable item: {item.totalWithTax}</p>
-            <p>Total if Non-Taxable item: {item.totalWithoutTax}</p>
+            <p className="text-sm mb-1">
+              Total if taxable item: {item.totalWithTax}
+            </p>
+            <p className="text-sm mb-4">
+              Total if Non-Taxable item: {item.totalWithoutTax}
+            </p>
+
+            {/* Dropdown for selecting category */}
+            <div className="mb-4">
+              <label
+                htmlFor={`category-${item.itemNumber}`}
+                className="block font-medium mb-1"
+              >
+                Category:
+              </label>
+              <select
+                id={`category-${item.itemNumber}`}
+                name="category"
+                value={selectedCategory[item.itemNumber] || ''}
+                onChange={(e) =>
+                  setSelectedCategory({
+                    ...selectedCategory,
+                    [item.itemNumber]: e.target.value,
+                  })
+                }
+                className="w-full border border-gray-300 rounded p-2"
+              >
+                <option value="">Select Category</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Janitorial">
+                  Janitorial & Cleaning Supplies
+                </option>
+                <option value="Operating Supplies">Operating Supplies</option>
+                <option value="Other Food">Other Food</option>
+                <option value="Paper Packaging">Paper Packaging</option>
+                <option value="Produce">Produce</option>
+              </select>
+            </div>
+
+            {/* Radio buttons for selecting taxable status */}
+            <div className="mb-4">
+              <span className="block font-medium mb-1">Taxable Status:</span>
+              <div className="flex items-center gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name={`taxable-${item.itemNumber}`}
+                    value="true"
+                    checked={isTaxable === true}
+                    onChange={() => setIsTaxable(!isTaxable)}
+                    className="mr-2"
+                  />
+                  Taxable
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name={`taxable-${item.itemNumber}`}
+                    value="false"
+                    checked={isTaxable === false}
+                    onChange={() => setIsTaxable(!isTaxable)}
+                    className="mr-2"
+                  />
+                  Non-Taxable
+                </label>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleAddToGfsList(item)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Add to GFS Code List
+            </button>
           </div>
         )
       })}
     </div>
   ) : (
-    <>
-      <h1>No Unmatched Data. Safe to add to database!</h1>
-      <button onClick={addToDb} className={style.button}>
-        {'Add To DB'}
+    <div className="text-center mt-8">
+      <h1 className="text-xl font-semibold mb-4">
+        No Unmatched Data. Safe to add to database!
+      </h1>
+      <button
+        onClick={addToDb}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Add To DB
       </button>
-    </>
+    </div>
   )
 }
 
