@@ -10,15 +10,17 @@ Since this is a repetitive task that takes a few minutes of manual work (pen, pa
 
 ## Current Version
 
-The first version is basic—no database or data persistence. You upload a CSV file from the supplier, and it processes the data, giving you a string to copy-paste to the accounting team.
+- You can upload a CSV file from the supplier (GFS), and the app will process the data into a formatted string you can copy and send to the accounting team.
+- Saving invoice information to a database is possible, but the feature isn’t fully polished yet.
+- The app tracks totals per invoice, but some details are still missing—this will be improved soon.
+- If there’s a small difference due to tax calculations, you can manually adjust category totals.
 
 ## Future Improvements
 
 Potential features for upcoming versions:
 
-- Save invoices, items, and suppliers to a database
-- Track totals per invoice for better auditing
-- Monitor spending per category over time
+- Refactor how some data is being passed to allow proper invoice storage in db;
+- Monitor spending per category over time (May be overkill, since we can do this through accounting and inventory management software..);
 - User login to track who added each invoice
 - Automatically send the email to the accounting team, or add a button for quick sending
 
