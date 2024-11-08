@@ -222,11 +222,9 @@ const findOrCreateCategory = async (itemCategory: any) => {
 
 export const categorizeItem = (item: any) => {
   try {
-    console.log("I'm in!")
     const newGfsCode = [...gfsCode, item]
     const newContent = `export const gfsCode=${JSON.stringify(newGfsCode)}`
     const filePath = path.resolve('app', 'api', 'config', 'gfs_code.ts')
-    // const filePath = path.join('@/app/api/config/', 'gfs_code.ts')
 
     fs.writeFile(filePath, newContent, (err) => {
       if (err) {

@@ -45,7 +45,7 @@ function calculateCategoryTotals(
       const itemNumber = item['Item Number']
       const itemDescription = item['Item Description']
       const extendedPrice = new BigNumber(item['Price (Extended)'])
-      const qtyShipped = item['Quantity Shipped']
+      // const qtyShipped = item['Quantity Shipped']
 
       const categoryEntry = categoryList.find(
         (entry) => entry.code === itemNumber
@@ -58,7 +58,7 @@ function calculateCategoryTotals(
           ? extendedPrice.plus(
               extendedPrice
                 .multipliedBy(salesTax / 100) // Add tax if applicable
-                .decimalPlaces(2, BigNumber.ROUND_HALF_UP) // Round to 2 decimal places
+                .decimalPlaces(2, BigNumber.ROUND_HALF_DOWN) // Round to 2 decimal places
             )
           : extendedPrice // otherwise, no tax
 
@@ -83,7 +83,7 @@ function calculateCategoryTotals(
         let totalWithTax = extendedPrice.plus(
           extendedPrice
             .multipliedBy(salesTax / 100) // add tax...
-            .decimalPlaces(2, BigNumber.ROUND_HALF_UP) // ...and round to 2 decimal places
+            .decimalPlaces(2, BigNumber.ROUND_HALF_DOWN) // ...and round to 2 decimal places
         )
 
         let totalWithoutTax = extendedPrice // no tax
@@ -106,17 +106,27 @@ function calculateCategoryTotals(
 
   // Apply additional charges evenly across categories and unmatched items
   const totalItems = matchedItems.length + unmatchedItems.length // Total number of items
+  const numberOfCategories = Object.keys(totals).length
 
-  if (additionalCharges && totalItems > 0) {
+  if (additionalCharges && numberOfCategories > 0) {
     const chargePerItem = new BigNumber(additionalCharges)
       .dividedBy(totalItems)
-      .decimalPlaces(2, BigNumber.ROUND_HALF_DOWN)
+      .decimalPlaces(2, BigNumber.ROUND_DOWN)
 
-    const mod = new BigNumber(additionalCharges).mod(totalItems)
+    const chargePerCategory = new BigNumber(additionalCharges)
+      .dividedBy(numberOfCategories)
+      .decimalPlaces(2, BigNumber.ROUND_DOWN)
+
+    const totalChargesForCategories =
+      chargePerCategory.multipliedBy(numberOfCategories)
+
+    const mod = new BigNumber(additionalCharges).minus(
+      totalChargesForCategories
+    )
 
     // Distribute charges to categories
     Object.keys(totals).forEach((category) => {
-      totals[category] = totals[category].plus(chargePerItem)
+      totals[category] = totals[category].plus(chargePerCategory)
     })
 
     // Find the category with the highest total
@@ -144,7 +154,7 @@ function calculateCategoryTotals(
     grandTotal = grandTotal.plus(additionalCharges)
   }
 
-  // Return both the category totals, grand total, and the unmatched items
+  // Return the category totals, grand total of invoice, and the matched/unmatched items
   return {
     totals,
     grandTotal,
@@ -152,4 +162,5 @@ function calculateCategoryTotals(
     unmatchedItems,
   }
 }
+
 export { readStreamToJsonArray, calculateCategoryTotals }
