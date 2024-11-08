@@ -21,12 +21,10 @@ const InvoicesPage = async () => {
   const invoices = await Promise.all(
     allInvoices.map(async (invoice: any) => {
       invoice.vendor = await getVendorData(invoice.vendorId)
-      console.log(invoice)
+      // console.log(invoice)
       return { ...invoice }
     })
   )
-
-  // console.log(invoices)
 
   return <InvoiceList invoices={invoices} />
 }

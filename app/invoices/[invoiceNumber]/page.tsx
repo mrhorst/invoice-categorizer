@@ -1,5 +1,5 @@
 import db from '@/utils/db'
-import { Item } from '@prisma/client'
+// import { Item } from '@prisma/client'
 
 const getInvoiceData = async (invoiceNumber: any) => {
   try {

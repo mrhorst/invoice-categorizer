@@ -118,7 +118,7 @@ const findOrCreateInvoice = async (invoiceInfo: any) => {
         grandTotal: invoiceInfo.grandTotal,
       },
     })
-    console.log(invoiceInfo)
+    // console.log(invoiceInfo)
     return upsertInvoice
   } catch (e) {
     console.error(

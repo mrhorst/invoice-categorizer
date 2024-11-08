@@ -36,7 +36,9 @@ const Invoice = ({ invoice }: any) => {
         </div>
         <div className="text-gray-800 font-semibold">
           Sales Tax:{' '}
-          <span className="font-normal text-gray-600">{invoice.salesTax}</span>
+          <span className="font-normal text-gray-600">
+            {invoice.salesTax?.toString()}
+          </span>
         </div>
         <div className="text-gray-800 font-semibold">
           Additional Charges:{' '}

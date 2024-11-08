@@ -1,4 +1,4 @@
-import { NextApiRequest } from 'next'
+// import { NextApiRequest } from 'next'
 import BigNumber from 'bignumber.js'
 import {
   Item,
@@ -6,6 +6,7 @@ import {
   UnmatchedItems,
   MatchedItems,
 } from '@/app/interfaces/item.interface'
+import { NextRequest } from 'next/server'
 
 interface ReadStreamResult {
   itemInfo: any
@@ -15,13 +16,33 @@ interface ReadStreamResult {
   additionalCharges: number
 }
 
+// async function readStreamToJsonArray(
+//   request: NextRequest
+// ): Promise<ReadStreamResult> {
+//   const chunks: Uint8Array[] = []
+
+//   for await (const chunk of request.body) {
+//     chunks.push(chunk)
+//   }
+
+//   const buffer = Buffer.concat(chunks)
+//   return JSON.parse(buffer.toString())
+// }
+
 async function readStreamToJsonArray(
-  request: NextApiRequest
+  request: NextRequest
 ): Promise<ReadStreamResult> {
+  const reader = request.body?.getReader()
+  if (!reader) {
+    throw new Error('Request body is not available or readable')
+  }
+
   const chunks: Uint8Array[] = []
 
-  for await (const chunk of request) {
-    chunks.push(chunk)
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    if (value) chunks.push(value)
   }
 
   const buffer = Buffer.concat(chunks)

@@ -209,14 +209,14 @@ const UnmatchedItemDisplay = ({
   ) : (
     <div className="text-center mt-8">
       <h1 className="text-xl font-semibold mb-4">
-        No Unmatched Data. Safe to add to database!
+        No Unmatched Data. {/*Safe to add to database!|*/}
       </h1>
-      <button
+      {/*<button
         onClick={addToDb}
         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
       >
         Add To DB
-      </button>
+      </button>*/}
     </div>
   )
 }
