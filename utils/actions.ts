@@ -5,7 +5,15 @@ import fs from 'fs'
 import path from 'path'
 import { Item } from '@/app/interfaces/item.interface'
 import BigNumber from 'bignumber.js'
-import { gfsCode } from '@/app/api/config/gfs_code'
+import prisma from '@/utils/db'
+
+async function getGfsItems() {
+  try {
+    return await prisma?.gFS_Items.findMany()
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 export const createInvoice = async (
   items: Item[] | undefined,
@@ -46,6 +54,7 @@ export const createInvoice = async (
 
 const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
   try {
+    const gfsCode = await getGfsItems()
     const listOfAddedItems: any = []
     await Promise.all(
       items.map(async (item: any) => {
@@ -61,7 +70,7 @@ const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
 
         if (!itemCreated) {
           const taxable =
-              gfsCode.find((entry) => entry.code === item['Item Number'])
+              gfsCode?.find((entry) => entry.code === item['Item Number'])
                 ?.tax ?? false,
             itemCreated = await db.item.create({
               data: {
@@ -191,7 +200,8 @@ const getItemTotals = (items: Item[]) => {
 
 const findOrCreateCategory = async (itemCategory: any) => {
   try {
-    const itemFound = gfsCode.find(
+    const gfsCode = await getGfsItems()
+    const itemFound = gfsCode?.find(
       (entry: any) => entry.code == itemCategory['Item Number']
     )
 
@@ -220,19 +230,34 @@ const findOrCreateCategory = async (itemCategory: any) => {
   }
 }
 
-export const categorizeItem = (item: any) => {
+export const categorizeItem = async (item: any) => {
   try {
-    const newGfsCode = [...gfsCode, item]
-    const newContent = `export const gfsCode=${JSON.stringify(newGfsCode)}`
-    const filePath = path.resolve('app', 'api', 'config', 'gfs_code.ts')
+    // const gfsCode = await getGfsItems()
 
-    fs.writeFile(filePath, newContent, (err) => {
-      if (err) {
-        console.error('Error writing to file:', err)
-      } else {
-        console.log('File successfully overwritten!')
-      }
+    await prisma.gFS_Items.upsert({
+      where: { code: item.code },
+      update: {
+        name: item.name,
+        category: item.category,
+        tax: item.tax,
+      },
+      create: {
+        code: item.code,
+        name: item.name,
+        category: item.category,
+        tax: item.tax,
+      },
     })
+    // const newContent = `export const gfsCode=${JSON.stringify(newGfsCode)}`
+    // const filePath = path.resolve('app', 'api', 'config', 'gfs_code.ts')
+
+    // fs.writeFile(filePath, newContent, (err) => {
+    //   if (err) {
+    //     console.error('Error writing to file:', err)
+    //   } else {
+    //     console.log('File successfully overwritten!')
+    //   }
+    // })
   } catch (e) {
     console.error(
       '***********************************\nERROR AT categorizeItem: ' + e

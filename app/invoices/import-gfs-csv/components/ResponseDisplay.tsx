@@ -100,14 +100,16 @@ const UnmatchedItemDisplay = ({
   const [selectedCategory, setSelectedCategory] = useState<{
     [key: string]: string
   }>({})
-  const [isTaxable, setIsTaxable] = useState<boolean>(false)
+  const [taxableStatus, setTaxableStatus] = useState<{
+    [key: string]: boolean
+  }>({})
 
   const handleAddToGfsList = (item: any) => {
     const itemInfo = {
       code: item.itemNumber,
       name: item.itemDescription,
       category: selectedCategory[item.itemNumber] || '',
-      tax: isTaxable,
+      tax: taxableStatus[item.itemNumber] || false,
     }
     // console.log('Is Taxable?', isTaxable)
     categorizeItem(itemInfo)
@@ -177,8 +179,13 @@ const UnmatchedItemDisplay = ({
                   type="radio"
                   name={`taxable-${item.itemNumber}`}
                   value="true"
-                  checked={isTaxable === true}
-                  onChange={() => setIsTaxable(!isTaxable)}
+                  checked={taxableStatus[item.itemNumber] === true}
+                  onChange={() =>
+                    setTaxableStatus({
+                      ...taxableStatus,
+                      [item.itemNumber]: true,
+                    })
+                  }
                   className="mr-2"
                 />
                 Taxable
@@ -188,8 +195,13 @@ const UnmatchedItemDisplay = ({
                   type="radio"
                   name={`taxable-${item.itemNumber}`}
                   value="false"
-                  checked={isTaxable === false}
-                  onChange={() => setIsTaxable(!isTaxable)}
+                  checked={taxableStatus[item.itemNumber] === false}
+                  onChange={() =>
+                    setTaxableStatus({
+                      ...taxableStatus,
+                      [item.itemNumber]: false,
+                    })
+                  }
                   className="mr-2"
                 />
                 Non-Taxable
