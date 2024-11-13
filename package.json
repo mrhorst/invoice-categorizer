@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "deploy": "gh-pages -d .next",
-    "predeploy": "npm run build"
+    "predeploy": "npm run build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
