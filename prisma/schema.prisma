@@ -58,3 +58,11 @@ model Category {
   name     String   @unique
   items    Item[]
 }
+
+model GFS_Items {
+  code      String  @id
+  name      String
+  category  String
+  tax       Boolean
+
+}
