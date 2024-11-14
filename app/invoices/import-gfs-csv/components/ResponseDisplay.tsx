@@ -115,11 +115,17 @@ const UnmatchedItemDisplay = ({
     categorizeItem(itemInfo)
   }
 
+  const uniqueUnmatchedItems =
+    data?.message.categoryTotals.unmatchedItems?.filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.itemNumber === item.itemNumber)
+    )
+
   return data &&
     data.message?.categoryTotals.unmatchedItems &&
     data.message.categoryTotals.unmatchedItems.length > 0 ? (
     <div className="container mx-auto p-4">
-      {data.message.categoryTotals.unmatchedItems.map((item: any) => (
+      {uniqueUnmatchedItems?.map((item: any) => (
         <div
           key={item.itemNumber}
           className="border border-red-500 bg-red-50 rounded-lg p-4 mb-6 shadow-md"
