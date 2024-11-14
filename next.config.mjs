@@ -6,8 +6,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  assetPrefix: isProd ? './invoice-categorizer/' : '',
-  basePath: isProd ? '/invoice-categorizer' : '',
+  // assetPrefix: isProd ? './invoice-categorizer/' : '',
+  // basePath: isProd ? '/invoice-categorizer' : '',
   output: 'standalone',
 }
 
