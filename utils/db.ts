@@ -9,15 +9,13 @@ const libsql = createClient({
   authToken: `${process.env.TURSO_AUTH_TOKEN}`,
 })
 
-const adapter = new PrismaLibSQL(libsql)
-//@ts-ignore
-let prisma = new PrismaClient({ adapter })
-
-// let prisma: PrismaClient
-
 declare global {
   var prisma: PrismaClient | undefined
 }
+
+const adapter = new PrismaLibSQL(libsql)
+//@ts-ignore
+let prisma = new PrismaClient({ adapter })
 
 if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient()
