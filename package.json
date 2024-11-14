@@ -2,6 +2,7 @@
   "name": "invoice-categorizer",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://invoice-categorizer.vercel.app/",
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
