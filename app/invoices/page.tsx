@@ -2,8 +2,12 @@ import InvoiceList from './components/InvoiceList'
 import db from '@/utils/db'
 
 const getInvoiceData = async () => {
-  const data = await db.invoice.findMany({})
-  return data
+  try {
+    const data = await db.invoice.findMany({})
+    return data
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const getVendorData = async (id: string) => {
@@ -16,17 +20,25 @@ const getVendorData = async (id: string) => {
 }
 
 const InvoicesPage = async () => {
-  const allInvoices = await getInvoiceData()
+  try {
+    const allInvoices = await getInvoiceData()
 
-  const invoices = await Promise.all(
-    allInvoices.map(async (invoice: any) => {
-      invoice.vendor = await getVendorData(invoice.vendorId)
-      // console.log(invoice)
-      return { ...invoice }
-    })
-  )
+    if (!allInvoices) {
+      throw new Error('No invoices found')
+    }
 
-  return <InvoiceList invoices={invoices} />
+    const invoices = await Promise.all(
+      allInvoices.map(async (invoice: any) => {
+        invoice.vendor = await getVendorData(invoice.vendorId)
+        // console.log(invoice)
+        return { ...invoice }
+      })
+    )
+
+    return <InvoiceList invoices={invoices} />
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 export default InvoicesPage
