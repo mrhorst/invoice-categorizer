@@ -1,6 +1,11 @@
 import InvoiceList from './components/InvoiceList'
 import db from '@/utils/db'
 
+const links = [
+  { href: '/invoices/import-gfs-csv', label: 'Import GFS Invoice CSV' },
+  // { href: '', label: 'Back' },
+]
+
 const getInvoiceData = async () => {
   try {
     const data = await db.invoice.findMany({})
@@ -20,25 +25,20 @@ const getVendorData = async (id: string) => {
 }
 
 const InvoicesPage = async () => {
-  try {
-    const allInvoices = await getInvoiceData()
+  const allInvoices = await getInvoiceData()
 
-    if (!allInvoices) {
-      throw new Error('No invoices found')
-    }
-
-    const invoices = await Promise.all(
-      allInvoices.map(async (invoice: any) => {
-        invoice.vendor = await getVendorData(invoice.vendorId)
-        // console.log(invoice)
-        return { ...invoice }
-      })
-    )
-
-    return <InvoiceList invoices={invoices} />
-  } catch (e) {
-    console.error(e)
+  if (!allInvoices) {
+    return <InvoiceList invoices={[]} />
   }
+
+  const invoices = await Promise.all(
+    allInvoices.map(async (invoice: any) => {
+      invoice.vendor = await getVendorData(invoice.vendorId)
+      return { ...invoice }
+    })
+  )
+
+  return <InvoiceList invoices={invoices} />
 }
 
 export default InvoicesPage
