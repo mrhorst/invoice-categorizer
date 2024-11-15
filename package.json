@@ -15,7 +15,7 @@
   "dependencies": {
     "@libsql/client": "^0.8.1",
     "@prisma/adapter-libsql": "^5.22.0",
-    "@prisma/client": "^5.20.0",
+    "@prisma/client": "^5.22.0",
     "axios": "^1.7.4",
     "bignumber": "^1.1.0",
     "csv-parser": "^3.0.0",
