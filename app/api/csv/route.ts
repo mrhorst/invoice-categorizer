@@ -13,10 +13,6 @@ export async function POST(request: NextRequest, response: NextApiResponse) {
     const { itemInfo, vendorName, invoiceNumber, salesTax, additionalCharges } =
       await readStreamToJsonArray(request)
 
-    console.log('NODE_ENV: ', process.env.NODE_ENV)
-    console.log('PRISMA: ', prisma)
-    console.log('*******************************************')
-
     const gfsCode = await prisma?.gFS_Items.findMany()
 
     const categoryTotals = calculateCategoryTotals(
