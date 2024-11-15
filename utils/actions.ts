@@ -1,8 +1,5 @@
 'use server'
 
-import db from './db'
-import fs from 'fs'
-import path from 'path'
 import { Item } from '@/app/interfaces/item.interface'
 import BigNumber from 'bignumber.js'
 import prisma from '@/utils/db'
@@ -61,7 +58,7 @@ const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
         const itemCategory = await findOrCreateCategory(item)
 
         // Check if item already exists
-        let itemCreated = await db.item.findFirst({
+        let itemCreated = await prisma?.item.findFirst({
           where: {
             invoiceId: invoiceNumber,
             itemCode: item['Item Number'],
@@ -72,7 +69,7 @@ const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
           const taxable =
               gfsCode?.find((entry) => entry.code === item['Item Number'])
                 ?.tax ?? false,
-            itemCreated = await db.item.create({
+            itemCreated = await prisma?.item.create({
               data: {
                 // invoiceId: invoiceNumber,
                 invoice: {
@@ -105,7 +102,7 @@ const findOrAddItemToInvoice = async (items: any, invoiceNumber: any) => {
 
 const findOrCreateInvoice = async (invoiceInfo: any) => {
   try {
-    let upsertInvoice = await db.invoice.upsert({
+    let upsertInvoice = await prisma?.invoice.upsert({
       where: {
         invoiceNumber: invoiceInfo.invoiceNumber,
       },
@@ -158,14 +155,14 @@ const extractInvoiceInfo = async (fileName: any) => {
 
 const findOrCreateVendor = async (vendorName: any) => {
   try {
-    let vendor = await db.vendor.findFirst({
+    let vendor = await prisma?.vendor.findFirst({
       where: {
         name: vendorName,
       },
     })
 
     if (!vendor) {
-      vendor = await db.vendor.create({
+      vendor = await prisma?.vendor.create({
         data: {
           name: vendorName,
         },
@@ -211,7 +208,7 @@ const findOrCreateCategory = async (itemCategory: any) => {
       )
     }
 
-    let upsertCategory = await db.category.upsert({
+    let upsertCategory = await prisma?.category.upsert({
       where: {
         name: itemFound?.category,
       },
@@ -234,7 +231,7 @@ export const categorizeItem = async (item: any) => {
   try {
     // const gfsCode = await getGfsItems()
 
-    await prisma.gFS_Items.upsert({
+    await prisma?.gFS_Items.upsert({
       where: { code: item.code },
       update: {
         name: item.name,

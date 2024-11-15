@@ -1,9 +1,8 @@
 import db from '@/utils/db'
-// import { Item } from '@prisma/client'
 
 const getInvoiceData = async (invoiceNumber: any) => {
   try {
-    const invoice = await db.invoice.findUnique({
+    const invoice = await db?.invoice.findUnique({
       where: {
         invoiceNumber: invoiceNumber,
       },
@@ -16,7 +15,7 @@ const getInvoiceData = async (invoiceNumber: any) => {
 
 const getVendorData = async (vendorId: any) => {
   try {
-    const vendor = await db.vendor.findUnique({
+    const vendor = await db?.vendor.findUnique({
       where: {
         id: vendorId,
       },
@@ -29,7 +28,7 @@ const getVendorData = async (vendorId: any) => {
 
 const getItemsData = async (invoiceNumber: any) => {
   try {
-    const items = await db.item.findMany({
+    const items = await db?.item.findMany({
       where: {
         invoiceId: invoiceNumber,
       },

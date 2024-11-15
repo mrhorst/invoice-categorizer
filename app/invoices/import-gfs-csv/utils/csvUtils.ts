@@ -16,19 +16,6 @@ interface ReadStreamResult {
   additionalCharges: number
 }
 
-// async function readStreamToJsonArray(
-//   request: NextRequest
-// ): Promise<ReadStreamResult> {
-//   const chunks: Uint8Array[] = []
-
-//   for await (const chunk of request.body) {
-//     chunks.push(chunk)
-//   }
-
-//   const buffer = Buffer.concat(chunks)
-//   return JSON.parse(buffer.toString())
-// }
-
 async function readStreamToJsonArray(
   request: NextRequest
 ): Promise<ReadStreamResult> {

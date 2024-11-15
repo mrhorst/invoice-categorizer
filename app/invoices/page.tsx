@@ -8,7 +8,7 @@ const links = [
 
 const getInvoiceData = async () => {
   try {
-    const data = await db.invoice.findMany({})
+    const data = await db?.invoice.findMany({})
     return data
   } catch (e) {
     console.error(e)
@@ -16,7 +16,7 @@ const getInvoiceData = async () => {
 }
 
 const getVendorData = async (id: string) => {
-  const data = await db.vendor.findUnique({
+  const data = await db?.vendor.findUnique({
     where: {
       id: id,
     },

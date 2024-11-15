@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { NextResponse, NextRequest } from 'next/server'
 
 import prisma from '@/utils/db'
+
 import {
   readStreamToJsonArray,
   calculateCategoryTotals,
@@ -12,11 +13,13 @@ export async function POST(request: NextRequest, response: NextApiResponse) {
     const { itemInfo, vendorName, invoiceNumber, salesTax, additionalCharges } =
       await readStreamToJsonArray(request)
 
-    const gfsCode = await prisma.gFS_Items.findMany()
+    console.log('NODE_ENV: ', process.env.NODE_ENV)
+
+    const gfsCode = await prisma?.gFS_Items.findMany()
 
     const categoryTotals = calculateCategoryTotals(
       itemInfo,
-      gfsCode,
+      gfsCode ?? [],
       salesTax,
       additionalCharges
     )
