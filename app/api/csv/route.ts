@@ -17,6 +17,10 @@ export async function POST(request: NextRequest, response: NextApiResponse) {
 
     const gfsCode = await prisma?.gFS_Items.findMany()
 
+    console.log('PRISMA: ', prisma)
+    console.log('*******************************************')
+    console.log('gfsCode: ', gfsCode)
+
     const categoryTotals = calculateCategoryTotals(
       itemInfo,
       gfsCode ?? [],
