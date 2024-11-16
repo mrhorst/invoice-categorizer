@@ -28,8 +28,6 @@ const UploadCSV: React.FC<UploadCSVProps> = ({
   const [vendor, setVendor] = useState<string>('gfs')
 
   const [salesTax, setSalesTax] = useState<number | null>(null)
-  const [additionalChargeName, setAdditionalChargeName] =
-    useState<string>('none')
   const [additionalChargeAmount, setAdditionalChargeAmount] = useState<
     number | null
   >(null)
