@@ -8,6 +8,7 @@ import {
   handleSendCsv,
 } from '../utils/importUtils'
 import { style } from '../styles/customStyles'
+import { error } from 'console'
 
 interface UploadCSVProps {
   setJsonResponse: (data: any) => void
@@ -31,6 +32,7 @@ const UploadCSV: React.FC<UploadCSVProps> = ({
   const [additionalChargeAmount, setAdditionalChargeAmount] = useState<
     number | null
   >(null)
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     if (csvData && fileName) {
@@ -44,7 +46,11 @@ const UploadCSV: React.FC<UploadCSVProps> = ({
         csvData,
         invoiceNumber: extractInvoiceNumber(fileName),
       }
+      setLoading(true)
       handleSendCsv(infoData, setJsonResponse, salesTax, additionalChargeAmount)
+        .then(() => setLoading(false))
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false))
     }
   }, [
     csvData,
@@ -56,6 +62,10 @@ const UploadCSV: React.FC<UploadCSVProps> = ({
     salesTax,
     additionalChargeAmount,
   ])
+
+  const isReadyToSubmit = () => {
+    return loading || file === null
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null
@@ -193,11 +203,29 @@ const UploadCSV: React.FC<UploadCSVProps> = ({
         </div>
         <button
           type="submit"
-          className="bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transform transition duration-300 hover:scale-105 w-auto self-center"
+          disabled={isReadyToSubmit()}
+          className={`${
+            isReadyToSubmit()
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700'
+          } text-white font-semibold py-2 px-4 rounded transform transition duration-300 hover:scale-105 w-auto self-center`}
         >
-          Upload CSV
+          {loading
+            ? 'Processing...'
+            : isReadyToSubmit()
+            ? 'Choose a CSV file'
+            : 'Analyze file'}
         </button>
       </form>
+
+      {loading && (
+        <div className="mt-4 flex flex-col items-center">
+          <span className="text-blue-600 font-semibold text-lg">
+            Processing your file...
+          </span>
+          <div className="spinner mt-2 border-4 border-t-blue-900 border-t-transparent border-blue-100 rounded-full w-10 h-10 animate-spin"></div>
+        </div>
+      )}
     </div>
   )
 }

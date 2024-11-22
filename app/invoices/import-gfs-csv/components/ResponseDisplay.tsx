@@ -278,6 +278,14 @@ const Totals = ({
     setGrandTotal(updatedGrandTotal)
   }
 
+  const copyCategoryTotals = () => {
+    navigator.clipboard.writeText(
+      Object.keys(categoriesTotal)
+        .map((category) => `${category}: ${categoriesTotal[category]}`)
+        .join('\n')
+    )
+  }
+
   return (
     <>
       <div className="space-y-4">
@@ -285,7 +293,29 @@ const Totals = ({
           <div className="w-1/2 pr-4">
             <h1 className="text-lg font-semibold mb-2">Subject:</h1>
             <p className="text-sm">{fileName}</p>
-            <h1 className="text-lg font-semibold mt-4 mb-2">Body:</h1>
+            <div className="flex justify-between items-center">
+              <p className="text-lg font-semibold mt-4 mb-4">Body:</p>
+              <button
+                onClick={copyCategoryTotals}
+                className="flex gap-1 h-5 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-600 text-xs py-0.5 px-1.5 rounded shadow-sm transition duration-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5h-3a2.25 2.25 0 00-2.25 2.25v11.25A2.25 2.25 0 005.25 20.25h9.75a2.25 2.25 0 002.25-2.25v-3M15 3.75H8.25v3h6.75m0-3v3m0-3a2.25 2.25 0 012.25 2.25v11.25m-6.75-2.25h6.75M8.25 10.5h5.25M8.25 13.5h2.25"
+                  />
+                </svg>
+                Copy categories
+              </button>
+            </div>
             <div className="space-y-1">
               {Object.keys(categoriesTotal).map((category) => (
                 <p key={category} className="text-sm">
