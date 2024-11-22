@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { CsvResponse } from '@/app/interfaces/response.interface'
-import { categorizeItem, createInvoice } from '@/utils/actions'
+import { categorizeItem } from '@/utils/actions'
 import BigNumber from 'bignumber.js'
 
 const ResponseDisplay = ({
@@ -20,21 +20,6 @@ const ResponseDisplay = ({
 }) => {
   const [isMatchedItemsVisible, setMatchedItemsVisible] = useState(false)
 
-  const addToDb = () => {
-    const {
-      itemInfo,
-      salesTax = new BigNumber(0),
-      additionalCharges = new BigNumber(0),
-    } = data?.message ?? {}
-    createInvoice(
-      itemInfo,
-      salesTax,
-      additionalCharges,
-      grandTotal ?? new BigNumber(0),
-      fileName
-    )
-  }
-
   const toggleMatchedItems = () => {
     setMatchedItemsVisible(!isMatchedItemsVisible)
   }
@@ -42,7 +27,7 @@ const ResponseDisplay = ({
   return data && data.message ? (
     <div className="p-3 rounded-lg shadow-lg flex flex-col">
       <div className="flex gap-4">
-        <UnmatchedItemDisplay data={data} addToDb={addToDb} />
+        <UnmatchedItemDisplay data={data} />
         <Totals
           fileName={fileName}
           grandTotal={grandTotal}
@@ -91,13 +76,7 @@ const MatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
   )
 }
 
-const UnmatchedItemDisplay = ({
-  data,
-  addToDb,
-}: {
-  data: CsvResponse | null
-  addToDb: () => void
-}) => {
+const UnmatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
   const [selectedCategory, setSelectedCategory] = useState<{
     [key: string]: string
   }>({})
@@ -229,15 +208,7 @@ const UnmatchedItemDisplay = ({
     </div>
   ) : (
     <div className="text-center mt-8">
-      <h1 className="text-xl font-semibold mb-4">
-        No Unmatched Data. {/*Safe to add to database!|*/}
-      </h1>
-      {/*<button
-        onClick={addToDb}
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Add To DB
-      </button>*/}
+      <h1 className="text-xl font-semibold mb-4">✅</h1>
     </div>
   )
 }
@@ -285,7 +256,9 @@ const Totals = ({
     navigator.clipboard.writeText(
       Object.keys(categoriesTotal)
         .map((category) => `${category}: ${categoriesTotal[category]}`)
-        .join('\n')
+        .join('\n') +
+        '\n\n' +
+        fileName
     )
   }
 
@@ -316,7 +289,7 @@ const Totals = ({
                     d="M8.25 4.5h-3a2.25 2.25 0 00-2.25 2.25v11.25A2.25 2.25 0 005.25 20.25h9.75a2.25 2.25 0 002.25-2.25v-3M15 3.75H8.25v3h6.75m0-3v3m0-3a2.25 2.25 0 012.25 2.25v11.25m-6.75-2.25h6.75M8.25 10.5h5.25M8.25 13.5h2.25"
                   />
                 </svg>
-                Copy categories
+                Copy
               </button>
             </div>
             <div className="space-y-1">
