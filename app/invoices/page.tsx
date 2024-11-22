@@ -1,11 +1,6 @@
 import InvoiceList from './components/InvoiceList'
 import db from '@/utils/db'
 
-const links = [
-  { href: '/invoices/import-gfs-csv', label: 'Import GFS Invoice CSV' },
-  // { href: '', label: 'Back' },
-]
-
 const getInvoiceData = async () => {
   try {
     const data = await db?.invoice.findMany({})
@@ -32,6 +27,7 @@ const InvoicesPage = async () => {
   }
 
   const invoices = await Promise.all(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     allInvoices.map(async (invoice: any) => {
       invoice.vendor = await getVendorData(invoice.vendorId)
       return { ...invoice }

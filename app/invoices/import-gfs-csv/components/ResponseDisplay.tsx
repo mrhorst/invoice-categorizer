@@ -71,6 +71,7 @@ const ResponseDisplay = ({
 const MatchedItemDisplay = ({ data }: { data: CsvResponse | null }) => {
   return data && data.message ? (
     <div className="mt-4">
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any*/}
       {data.message.categoryTotals?.matchedItems.map((item: any) => (
         <div
           className="p-4 border border-gray-300 rounded-lg mb-4 bg-gray-50 shadow"
@@ -104,6 +105,7 @@ const UnmatchedItemDisplay = ({
     [key: string]: boolean
   }>({})
 
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any*/
   const handleAddToGfsList = (item: any) => {
     const itemInfo = {
       code: item.itemNumber,
@@ -125,6 +127,7 @@ const UnmatchedItemDisplay = ({
     data.message?.categoryTotals.unmatchedItems &&
     data.message.categoryTotals.unmatchedItems.length > 0 ? (
     <div className="container mx-auto p-4">
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any*/}
       {uniqueUnmatchedItems?.map((item: any) => (
         <div
           key={item.itemNumber}

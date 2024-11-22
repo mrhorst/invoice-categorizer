@@ -26,7 +26,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/api/config/parser.js"
+    "app/api/config/parser.js",
+    "next.config.mjs"
   ],
   "exclude": ["node_modules"]
 }
